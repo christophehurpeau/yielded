@@ -1,7 +1,8 @@
 {
   "name": "yielded",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "yielded =======",
+  "keywords": ["async", "generator", "yield", "promise", "resume", "suspend"],
   "main": "index.js",
   "directories": {
     "test": "test"
