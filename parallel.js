@@ -1,4 +1,4 @@
-module.exports = function() {
+    module.exports = function() {
     return new Parallel();
 };
 
@@ -14,6 +14,7 @@ function Parallel() {
 
 Parallel.prototype.add = function(value) {
     if (value instanceof Promise) {
+        this.pending++;
         var index = this.nextIndex++;
         value
             .then(function(result) {

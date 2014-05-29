@@ -1,6 +1,6 @@
 {
   "name": "yielded",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "yielded =======",
   "keywords": ["async", "generator", "yield", "promise", "resume", "suspend"],
   "main": "index.js",
