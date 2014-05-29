@@ -1,7 +1,7 @@
 module.exports = function Y(fn) {
     var y = new Yieldable();
-    fn.resume = y.resume.bind(y);
-    return y.resolve(fn());
+    var resume = y.resume.bind(y);
+    return y.resolve(fn(resume));
 };
 
 module.exports.promise = function(fn) {
@@ -11,18 +11,15 @@ module.exports.promise = function(fn) {
             y.done = resolve;
             y.throwCallback = reject;
             var resume = y.resume.bind(y);
-            if (fn.name) {
-                if (fn.resume) {
-                    throw new Error('resume is already defined');
-                }
-                fn.resume = resume;
-            }
             y.resolve(fn(resume))();
         } catch(err) {
             reject(err);
         }
     });
 };
+
+module.exports.parallel = require('./parallel');
+
 
 function Yieldable() {
     this.nextBinded = this.next.bind(this);
@@ -53,6 +50,9 @@ Yieldable.prototype.next = function(value) {
         return this.done(value);
     }
 
+    if (value === undefined) {
+        return;
+    }
     if (value instanceof Promise) {
         this.handlePromise(value, this.nextBinded)
         return;
@@ -71,7 +71,7 @@ Yieldable.prototype.done = function(value) {
 
 Yieldable.prototype.resume = function(err, value) {
     if (err) {
-        return this.generator.throw(err);
+        return this.throw(err);
     }
     this.next(value);
 };
@@ -115,3 +115,4 @@ Yieldable.prototype.throw = function(err) {
         }
     }
 };
+

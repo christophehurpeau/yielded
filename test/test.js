@@ -59,7 +59,7 @@ test('Error in promise', function() {
 });
 
 
-test('Parallel execution', function() {
+test('Parallel execution with array', function() {
     var gen = function* () {
         var result = yield [
             new Promise(function(resolve, reject) {
@@ -81,14 +81,59 @@ test('Parallel execution', function() {
         });
 });
 
+
+function asyncDouble(num, cb) {
+    setTimeout(cb.bind(null, null, num * 2), 20);
+}
+function asyncError(cb) {
+    setTimeout(cb.bind(null, new Error('oops')), 20);
+}
+
 test('resume', function() {
-    var gen = function* f() {
-        var result;
-        yield setTimeout(f.resume, 300);
+    var gen = function* (resume) {
+        var result = yield asyncDouble(10, resume);
         return result;
     };
     return Y.promise(gen)
         .then(function(result) {
-            expect(result, 'ok');
+            expect(result, 20);
+        });
+});
+
+
+test('resume error', function() {
+    var gen = function* (resume) {
+        var result;
+        yield asyncError(resume);
+        return result;
+    };
+    return Y.promise(gen)
+        .catch(function(error) {
+            expect(error.message, 'oops');
+        });
+});
+
+test('Y.parallel', function() {
+    var p = Y.parallel();
+    p.add(1);
+    p.add(new Promise(function(resolve, reject) {
+        resolve(2);
+    }));
+    asyncDouble(20, p.resume());
+
+    p.promise
+        .then(function(results) {
+            assert.deepEqual(results, [1, 2, 4]);
+        });
+
+    p = Y.parallel();
+    p.add(1);
+    p.add(new Promise(function(resolve, reject) {
+        resolve(2);
+    }));
+
+    p.promise
+        .then(function(results) {
+            assert.deepEqual(results, [1, 2]);
         });
 });

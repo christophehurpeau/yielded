@@ -15,14 +15,72 @@ npm install --save yielded
 var Y = require('yielded');
 var fs = require('fs');
 
-Y(function* f() {
+Y(function* (resume) {
     try {
-        var fileContents = yield fs.readFile('./myFile.json', f.resume);
+        var fileContents = yield fs.readFile('./myFile.json', resume);
         console.log(JSON.parse(fileContents));
     } catch (err) {
         console.error(err);
     }
 })();
+```
+
+### Parallel executions
+
+#### With arrays
+
+You can use arrays with values and promises:
+
+```
+Y(function* () {
+    var result = yield [
+        1,
+        2,
+        new Promise(function(resolve, reject) {
+            setTimeout(function() {
+                resolve(3);
+            });
+        }),
+        new Promise(function(resolve, reject) {
+            resolve(4);
+        }),
+    ];
+    console.log(result);
+    // [1, 2, 3, 4]
+});
+```
+
+#### With Y.parallel
+
+With Y.parallel, you can use node style callbacks
+
+```
+Y(function* (resume) {
+    var files = yield fs.readdir('test', resume);
+
+    var p = Y.parallel();
+    files.forEach(function(fileName) {
+        fs.readFile('test/' + fileName, p.resume()); // resume here is a callback factory
+    });
+
+    var filesContent = yield p.promise;
+
+    console.log(filesContent);
+});
+```
+
+parallel also support values and promises :
+
+```
+var p = Y.parallel();
+p.add(1);
+p.add(new Promise(function(resolve, reject) {
+    resolve(2);
+}));
+
+var results = yield p.promise;
+console.log(results);
+// [1, 2]
 ```
 
 ## Credits
