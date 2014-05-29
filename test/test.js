@@ -80,4 +80,15 @@ test('Parallel execution', function() {
             assert.deepEqual(result, [1, 2, 3]);
         });
 });
-/**/
+
+test('resume', function() {
+    var gen = function* f() {
+        var result;
+        yield setTimeout(f.resume, 300);
+        return result;
+    };
+    return Y.promise(gen)
+        .then(function(result) {
+            expect(result, 'ok');
+        });
+});

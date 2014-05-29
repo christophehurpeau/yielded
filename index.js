@@ -10,8 +10,14 @@ module.exports.promise = function(fn) {
             var y = new Yieldable();
             y.done = resolve;
             y.throwCallback = reject;
-            fn.resume = y.resume.bind(y);
-            y.resolve(fn())();
+            var resume = y.resume.bind(y);
+            if (fn.name) {
+                if (fn.resume) {
+                    throw new Error('resume is already defined');
+                }
+                fn.resume = resume;
+            }
+            y.resolve(fn(resume))();
         } catch(err) {
             reject(err);
         }
