@@ -27,7 +27,7 @@ Y(function* f() {
 
 ## Credits
 
-This library is the result of my research of other libraries and taking the parts I like from them. Libraries I took inspiration from are:
+This library is an attempt to understand generators and yields, the result of my research of other libraries and taking the parts I like from them. Libraries I took inspiration from are:
 
  - <https://github.com/mikach/yielding>
  - <https://github.com/visionmedia/co>
