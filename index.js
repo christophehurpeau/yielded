@@ -43,7 +43,6 @@ Yieldable.prototype.next = function(value) {
         }
         return;
     }
-    //console.log(next.done, value, next.value);
     value = next.value;
 
     if (next.done) {

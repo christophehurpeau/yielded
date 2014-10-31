@@ -11,7 +11,7 @@ npm install --save yielded
 
 ## How to use
 
-```
+```js
 var Y = require('yielded');
 var fs = require('fs');
 
@@ -31,7 +31,7 @@ Y(function* (resume) {
 
 You can use arrays with values and promises:
 
-```
+```js
 Y(function* () {
     var result = yield [
         1,
@@ -54,7 +54,7 @@ Y(function* () {
 
 With Y.parallel, you can use node style callbacks
 
-```
+```js
 Y(function* (resume) {
     var files = yield fs.readdir('test', resume);
 
@@ -71,7 +71,7 @@ Y(function* (resume) {
 
 parallel also support values and promises :
 
-```
+```js
 var p = Y.parallel();
 p.add(1);
 p.add(new Promise(function(resolve, reject) {
