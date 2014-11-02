@@ -3,7 +3,7 @@ yielded
 
 Another generator runner
 
-yielded doesn't help you with callback generator, it uses promises. To convert a function with a callback to a promise, you can use [springbokjs-utils](https://www.npmjs.org/package/springbokjs-utils) [promiseCallback](api).
+yielded doesn't help you with callback generator, it uses promises. To convert a function with a callback to a promise, you can use [springbokjs-utils](https://www.npmjs.org/package/springbokjs-utils) [promiseCallback](http://christophehurpeau.github.io/springbokjs-utils/docs/module-utils.html#promiseCallback).
 
 ## Installation
 
