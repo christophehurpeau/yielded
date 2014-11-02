@@ -1,24 +1,51 @@
-module.exports = function Y(fn) {
-    var y = new Yieldable();
-    var resume = y.resume.bind(y);
-    return y.resolve(fn(resume));
+var isIterator = function(value) {
+    return typeof value === 'object' && typeof value.next === 'function';
 };
 
-module.exports.promise = function(fn) {
+/**
+ * Execute the generator function or the normal function, but without caring about the result.
+ * @param {Function} fn
+ */
+var Y = module.exports = exports = function Y(value) {
+    if (isIterator(value)) {
+        Y.resolve(value);
+    }
+};
+
+Y.run = function(fn) {
+    return Y(fn());
+}
+
+Y.resolve = function(value) {
+    var y = new Yieldable();
+    y.resolve(value);
+};
+
+Y.promise = function(value) {
+    if (!isIterator(value)) {
+        return Promise.resolve(value);
+    }
+    return Y.promiseResolve(value);
+};
+
+Y.promiseResolve = function(value) {
     return new Promise(function(resolve, reject) {
         try {
             var y = new Yieldable();
             y.done = resolve;
             y.throwCallback = reject;
-            var resume = y.resume.bind(y);
-            y.resolve(fn(resume))();
+            y.resolve(value);
         } catch(err) {
             reject(err);
         }
     });
 };
 
-module.exports.parallel = require('./parallel');
+Y.wrap = function(fn) {
+    return function() {
+        return module.exports.promise(fn.call(this, arguments));
+    };
+}
 
 
 function Yieldable() {
@@ -28,7 +55,7 @@ function Yieldable() {
 
 Yieldable.prototype.resolve = function(generator) {
     this.generator = generator;
-    return this.nextBinded;
+    this.next();
 };
 
 Yieldable.prototype.next = function(value) {
@@ -56,6 +83,10 @@ Yieldable.prototype.next = function(value) {
         this.handlePromise(value, this.nextBinded)
         return;
     }
+    if (isIterator(value)) {
+        this.handlePromise(Y.promiseResolve(value), this.nextBinded)
+        return;
+    }
     if (value instanceof Array) {
         this.handleParallel(value, this.nextBinded);
         return;
@@ -66,13 +97,6 @@ Yieldable.prototype.next = function(value) {
 
 Yieldable.prototype.done = function(value) {
     return value;
-};
-
-Yieldable.prototype.resume = function(err, value) {
-    if (err) {
-        return this.throw(err);
-    }
-    this.next(value);
 };
 
 Yieldable.prototype.handleParallel = function(array, then) {
@@ -88,6 +112,12 @@ Yieldable.prototype.handleParallel = function(array, then) {
         if (item instanceof Promise) {
             pending++;
             this.handlePromise(item, function(result) {
+                results[index] = result;
+                doneItem();
+            });
+        } else if (isIterator(item)) {
+            pending++;
+            this.handlePromise(Y.promiseResolve(item), function(result) {
                 results[index] = result;
                 doneItem();
             });

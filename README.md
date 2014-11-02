@@ -3,6 +3,8 @@ yielded
 
 Another generator runner
 
+yielded doesn't help you with callback generator, it uses promises. To convert a function with a callback to a promise, you can use [springbokjs-utils](https://www.npmjs.org/package/springbokjs-utils) [promiseCallback](api).
+
 ## Installation
 
 ```
@@ -13,16 +15,16 @@ npm install --save yielded
 
 ```js
 var Y = require('yielded');
-var fs = require('fs');
+var fs = require('springbokjs-utils/fs');
 
-Y(function* (resume) {
+Y.run(function* () {
     try {
-        var fileContents = yield fs.readFile('./myFile.json', resume);
+        var fileContents = yield fs.readFile('./myFile.json');
         console.log(JSON.parse(fileContents));
     } catch (err) {
         console.error(err);
     }
-})();
+});
 ```
 
 ### Parallel executions
@@ -32,7 +34,7 @@ Y(function* (resume) {
 You can use arrays with values and promises:
 
 ```js
-Y(function* () {
+Y.run(function* () {
     var result = yield [
         1,
         2,
@@ -50,37 +52,26 @@ Y(function* () {
 });
 ```
 
-#### With Y.parallel
+### Iterator inside
 
-With Y.parallel, you can use node style callbacks
 
 ```js
-Y(function* (resume) {
-    var files = yield fs.readdir('test', resume);
+var Y = require('yielded');
+var fs = require('springbokjs-utils/fs');
 
-    var p = Y.parallel();
-    files.forEach(function(fileName) {
-        fs.readFile('test/' + fileName, p.resume()); // resume here is a callback factory
-    });
+var readFileContents = function* () {
+    try {
+        var fileContents = yield fs.readFile('./myFile.json');
+        console.log(JSON.parse(fileContents));
+    } catch (err) {
+        console.error(err);
+    }
+};
 
-    var filesContent = yield p.promise;
-
-    console.log(filesContent);
+Y.run(function* () {
+    var result = yield readFileContents();
+    console.log(result);
 });
-```
-
-parallel also support values and promises :
-
-```js
-var p = Y.parallel();
-p.add(1);
-p.add(new Promise(function(resolve, reject) {
-    resolve(2);
-}));
-
-var results = yield p.promise;
-console.log(results);
-// [1, 2]
 ```
 
 ## Credits
