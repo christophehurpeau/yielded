@@ -1,8 +1,9 @@
+/* global test */
 var assert = require('proclaim');
 var expect = assert.strictEqual;
-var Y = require('../index');
+var y = require('../index');
 
-test('Y function', function() {
+test('y function', function() {
     var gen = function* () {
         for (var i = 0; ++i < 100000;) {
             yield i;
@@ -10,9 +11,9 @@ test('Y function', function() {
         return i;
     };
 
-    Y(gen());
+    y(gen());
 
-    var promise = Y.promise(gen());
+    var promise = y.promise(gen());
     assert.isInstanceOf(promise, Promise);
 
     return promise
@@ -21,14 +22,14 @@ test('Y function', function() {
         });
 });
 
-test('Y function also handles generator without yield', function() {
+test('y function also handles generator without yield', function() {
     var fn = function* () {
         return 10000;
     };
 
-    Y(fn());
+    y(fn());
 
-    var promise = Y.promise(fn());
+    var promise = y.promise(fn());
     assert.isInstanceOf(promise, Promise);
 
     return promise
@@ -36,14 +37,14 @@ test('Y function also handles generator without yield', function() {
             expect(result, 10000);
         });
 });
-test('Y function also handles normal functions', function() {
+test('y function also handles normal functions', function() {
     var fn = function () {
         return 10000;
     };
 
-    var y = Y(fn());
+    y(fn());
 
-    var promise = Y.promise(fn());
+    var promise = y.promise(fn());
     assert.isInstanceOf(promise, Promise);
 
     return promise
@@ -57,7 +58,7 @@ test('Error', function() {
         yield 1;
         throw new Error('This is a test error');
     };
-    return Y.promise(gen())
+    return y.promise(gen())
         .catch(function(err) {
             expect(err.message, 'This is a test error');
         });
@@ -70,7 +71,7 @@ test('Promises', function() {
         });
         return result;
     };
-    return Y.promise(gen())
+    return y.promise(gen())
         .then(function(result) {
             expect(result, 2);
         });
@@ -84,7 +85,7 @@ test('Error in promise', function() {
         });
         return result;
     };
-    return Y.promise(gen())
+    return y.promise(gen())
         .catch(function(err) {
             expect(err.message, 'This is a test error');
         });
@@ -106,7 +107,7 @@ test('Parallel execution with array', function() {
         ];
         return result;
     };
-    return Y.promise(gen())
+    return y.promise(gen())
         .then(function(result) {
             assert.isArray(result);
             assert.deepEqual(result, [1, 2, 3]);
@@ -126,7 +127,7 @@ test('yield iterator', function() {
         var result = yield asyncDouble(10);
         return result;
     };
-    return Y.promise(gen())
+    return y.promise(gen())
         .then(function(result) {
             expect(result, 20);
         });
@@ -138,7 +139,7 @@ test('yield iterator with error', function() {
         yield asyncError();
         return result;
     };
-    return Y.promise(gen())
+    return y.promise(gen())
         .catch(function(error) {
             expect(error.message, 'oops');
         });

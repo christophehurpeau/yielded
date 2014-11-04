@@ -15,6 +15,7 @@
     "maxlen": 120,
     "boss": true,
     "eqnull": true,
+    "noyield": true,
     "node": true,
     "predef": [ ]
 }
