@@ -6,29 +6,29 @@ var isIterator = function(value) {
  * Execute the generator function or the normal function, but without caring about the result.
  * @param {Function} fn
  */
-var Y = module.exports = exports = function Y(value) {
+var y = module.exports = exports = function y(value) {
     if (isIterator(value)) {
-        Y.resolve(value);
+        y.resolve(value);
     }
 };
 
-Y.run = function(fn) {
-    return Y(fn());
-}
+y.run = function(fn) {
+    return y(fn());
+};
 
-Y.resolve = function(value) {
+y.resolve = function(value) {
     var y = new Yieldable();
     y.resolve(value);
 };
 
-Y.promise = function(value) {
+y.promise = function(value) {
     if (!isIterator(value)) {
         return Promise.resolve(value);
     }
-    return Y.promiseResolve(value);
+    return y.promiseResolve(value);
 };
 
-Y.promiseResolve = function(value) {
+y.promiseResolve = function(value) {
     return new Promise(function(resolve, reject) {
         try {
             var y = new Yieldable();
@@ -41,17 +41,17 @@ Y.promiseResolve = function(value) {
     });
 };
 
-Y.wrap = function(fn) {
+y.wrap = function(fn) {
     return function() {
         return module.exports.promise(fn.call(this, arguments));
     };
-}
+};
 
 
 function Yieldable() {
     this.nextBinded = this.next.bind(this);
     this.throwBinded = this.throw.bind(this);
-};
+}
 
 Yieldable.prototype.resolve = function(generator) {
     this.generator = generator;
@@ -80,11 +80,11 @@ Yieldable.prototype.next = function(value) {
         return;
     }
     if (value instanceof Promise) {
-        this.handlePromise(value, this.nextBinded)
+        this.handlePromise(value, this.nextBinded);
         return;
     }
     if (isIterator(value)) {
-        this.handlePromise(Y.promiseResolve(value), this.nextBinded)
+        this.handlePromise(y.promiseResolve(value), this.nextBinded);
         return;
     }
     if (value instanceof Array) {
@@ -117,7 +117,7 @@ Yieldable.prototype.handleParallel = function(array, then) {
             });
         } else if (isIterator(item)) {
             pending++;
-            this.handlePromise(Y.promiseResolve(item), function(result) {
+            this.handlePromise(y.promiseResolve(item), function(result) {
                 results[index] = result;
                 doneItem();
             });
