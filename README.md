@@ -1,4 +1,4 @@
-yielded
+yielded [![NPM version][npm-image]][npm-url] [![Build Status][build-status-image]][build-status-url] [![Code Climate][codeclimate-image]][codeclimate-url]
 =======
 
 Another generator runner
@@ -82,3 +82,10 @@ This library is an attempt to understand generators and yields, the result of my
  - <https://github.com/visionmedia/co>
  - <https://github.com/jmar777/suspend>
  - <https://github.com/spion/genny>
+
+[npm-image]: https://img.shields.io/npm/v/yielded.svg?style=flat
+[npm-url]: https://npmjs.org/package/yielded
+[build-status-image]: https://drone.io/github.com/christophehurpeau/yielded/status.png
+[build-status-url]: https://drone.io/github.com/christophehurpeau/yielded/latest
+[codeclimate-image]: https://codeclimate.com/github/christophehurpeau/yielded/badges/gpa.svg
+[codeclimate-url]: https://codeclimate.com/github/christophehurpeau/yielded
