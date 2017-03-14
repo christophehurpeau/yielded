@@ -1,6 +1,8 @@
 yielded [![NPM version][npm-image]][npm-url] [![Build Status][build-status-image]][build-status-url] [![Code Climate][codeclimate-image]][codeclimate-url]
 =======
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/christophehurpeau/yielded.svg)](https://greenkeeper.io/)
+
 Another generator runner
 
 yielded doesn't help you with callback generator, it uses promises. To convert a function with a callback to a promise, you can use [springbokjs-utils](https://www.npmjs.org/package/springbokjs-utils) [promiseCallback](http://christophehurpeau.github.io/springbokjs-utils/docs/module-utils.html#promiseCallback).
